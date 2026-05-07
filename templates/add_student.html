@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Add Student - AI Attendance System{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <h1 class="h2">
+        <i class="fas fa-user-plus"></i> Add New Student
+    </h1>
+    <p class="text-muted">Register a new student and capture their face data</p>
+
+    <div class="row mt-4">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Student Information</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('add_student') }}">
+                        <div class="mb-3">
+                            <label for="student_id" class="form-label">
+                                <i class="fas fa-id-card"></i> Student ID *
+                            </label>
+                            <input type="text" class="form-control" id="student_id" name="student_id" 
+                                   placeholder="e.g., STU001" required>
+                            <small class="text-muted">Unique identifier for the student</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="name" class="form-label">
+                                <i class="fas fa-user"></i> Full Name *
+                            </label>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                   placeholder="e.g., John Doe" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="course" class="form-label">
+                                <i class="fas fa-book"></i> Course/Semester *
+                            </label>
+                            <input type="text" class="form-control" id="course" name="course" 
+                                   placeholder="e.g., B.Tech CS - Sem 4" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope"></i> Email
+                            </label>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   placeholder="e.g., john@example.com">
+                            <small class="text-muted">Optional</small>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Add Student & Capture Faces
+                            </button>
+                            <a href="{{ url_for('view_students') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Students
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle"></i> Instructions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="mb-3">Step 1: Fill Student Details</h6>
+                    <p>Enter all required information about the student:</p>
+                    <ul class="ms-3">
+                        <li><strong>Student ID:</strong> Unique identifier (cannot be duplicated)</li>
+                        <li><strong>Full Name:</strong> Student's complete name</li>
+                        <li><strong>Course:</strong> Course and semester information</li>
+                        <li><strong>Email:</strong> Optional contact email</li>
+                    </ul>
+
+                    <h6 class="mt-4 mb-3">Step 2: Capture Face Images</h6>
+                    <p>After submitting, you will be directed to capture face images:</p>
+                    <ul class="ms-3">
+                        <li>Ensure good lighting conditions</li>
+                        <li>Face should be clearly visible</li>
+                        <li>Minimum 20-30 images recommended</li>
+                        <li>Images will be captured automatically</li>
+                    </ul>
+
+                    <h6 class="mt-4 mb-3">Step 3: Train Model</h6>
+                    <p>After capturing all students' faces, train the model from the <strong>Train Model</strong> menu.</p>
+
+                    <div class="alert alert-info mt-4 mb-0">
+                        <i class="fas fa-lightbulb"></i> <strong>Tip:</strong> More face images = Better accuracy. 
+                        Try to capture faces from different angles and lighting conditions.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+</style>
+{% endblock %}

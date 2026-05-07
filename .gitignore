@@ -1,0 +1,10 @@
+venv/
+venv310/
+__pycache__/
+*.pyc
+instance/
+*.db
+*.sqlite3
+dataset/
+trainer/
+.env

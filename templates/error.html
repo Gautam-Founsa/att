@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Error - AI Attendance System{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <div class="text-center">
+        <h1 class="display-1 text-danger">
+            <i class="fas fa-exclamation-circle"></i>
+        </h1>
+        <h2>{{ message }}</h2>
+        <p class="text-muted mt-3">Something went wrong. Please try again or contact support.</p>
+        
+        <div class="mt-4">
+            <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
+                <i class="fas fa-home"></i> Go to Dashboard
+            </a>
+            <a href="javascript:history.back()" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Go Back
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

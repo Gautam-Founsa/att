@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block title %}Capture Faces - AI Attendance System{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <div class="row">
+        <div class="col">
+            <h1 class="h2">
+                <i class="fas fa-camera"></i> Capture Face Images
+            </h1>
+            <p class="text-muted">
+                Capture face images for <strong>{{ student.name }}</strong> (ID: {{ student.student_id }})
+            </p>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Capture Process</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> 
+                        <strong>Instructions:</strong> Click "Start Capture" to open your webcam. 
+                        The system will automatically capture 30 face images. Make sure your face is clearly visible and well-lit.
+                    </div>
+
+                    <div class="text-center mb-4">
+                        <div id="captureStatus" class="alert alert-warning">
+                            Click "Start Capture" to begin
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button id="startCaptureBtn" class="btn btn-lg btn-success" onclick="startCapture()">
+                            <i class="fas fa-camera"></i> Start Face Capture (30 Images)
+                        </button>
+                        <div id="progressContainer" style="display: none;">
+                            <div class="progress" style="height: 25px;">
+                                <div id="progressBar" class="progress-bar bg-success" role="progressbar" 
+                                     style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                    <span id="progressText">0%</span>
+                                </div>
+                            </div>
+                            <p class="text-center mt-2" id="captureCounter">Captured: 0/30</p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h6>Current Status</h6>
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <p>
+                                        <strong>Captured Images:</strong> 
+                                        <span id="captureCount" class="badge bg-primary">{{ student.face_data_count }}</span>
+                                    </p>
+                                    <p class="mb-0">
+                                        <strong>Status:</strong>
+                                        {% if student.face_data_count >= 20 %}
+                                        <span class="badge bg-success">Ready for Training</span>
+                                        {% else %}
+                                        <span class="badge bg-warning">Need {{ 20 - student.face_data_count }} more images</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Next Steps</h6>
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <ol class="mb-0">
+                                        <li>Capture at least 20-30 face images</li>
+                                        <li>Go to <strong>Train Model</strong></li>
+                                        <li>Click <strong>Train Model</strong> to process all images</li>
+                                        <li>Use <strong>Take Attendance</strong> to mark presence</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-lightbulb"></i> Tips for Best Results
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success"></i> <strong>Good Lighting:</strong> 
+                            Make sure face is well-lit
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success"></i> <strong>Clear View:</strong> 
+                            Face should be clearly visible
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success"></i> <strong>Front-facing:</strong> 
+                            Look directly at the camera
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success"></i> <strong>Different Angles:</strong> 
+                            Try slight head movements
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success"></i> <strong>Different Expressions:</strong> 
+                            Neutral and smiling faces
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success"></i> <strong>Minimum Images:</strong> 
+                            30+ images for best accuracy
+                        </li>
+                    </ul>
+
+                    <hr>
+
+                    <h6 class="mt-3">Recommended Setup</h6>
+                    <ul class="list-unstyled small">
+                        <li>🖥️ Desktop/Laptop with webcam</li>
+                        <li>💡 Well-lit room</li>
+                        <li>📏 60cm distance from camera</li>
+                        <li>⏱️ 2-3 minutes total time</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Actions</h5>
+                </div>
+                <div class="card-body">
+                    {% if student.face_data_count >= 20 %}
+                    <a href="{{ url_for('train_model') }}" class="btn btn-warning w-100 mb-2">
+                        <i class="fas fa-brain"></i> Go to Train Model
+                    </a>
+                    {% endif %}
+                    <a href="{{ url_for('view_students') }}" class="btn btn-outline-secondary w-100">
+                        <i class="fas fa-arrow-left"></i> Back to Students
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function startCapture() {
+    const studentId = "{{ student.student_id }}";
+    const captureBtn = document.getElementById('startCaptureBtn');
+    const captureStatus = document.getElementById('captureStatus');
+    const progressContainer = document.getElementById('progressContainer');
+    
+    // Disable button during capture
+    captureBtn.disabled = true;
+    captureBtn.textContent = '⏳ Capturing...';
+    captureStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Capture in progress...';
+    progressContainer.style.display = 'block';
+    
+    // Call backend API to start capture
+    fetch('/api/start-capture', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            student_id: studentId,
+            num_images: 30
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            captureStatus.className = 'alert alert-success';
+            captureStatus.innerHTML = '<i class="fas fa-check-circle"></i> ' + data.message;
+            document.getElementById('captureCount').textContent = data.face_count;
+            document.getElementById('progressBar').style.width = '100%';
+            document.getElementById('progressText').textContent = '100%';
+            document.getElementById('captureCounter').textContent = 'Captured: ' + data.face_count + '/30';
+        } else {
+            captureStatus.className = 'alert alert-danger';
+            captureStatus.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + data.message;
+        }
+    })
+    .catch(error => {
+        captureStatus.className = 'alert alert-danger';
+        captureStatus.innerHTML = '<i class="fas fa-exclamation-circle"></i> Error: ' + error.message;
+    })
+    .finally(() => {
+        // Re-enable button
+        captureBtn.disabled = false;
+        captureBtn.textContent = '<i class="fas fa-camera"></i> Start Face Capture (30 Images)';
+    });
+}
+</script>
+{% endblock %}
